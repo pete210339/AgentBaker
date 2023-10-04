@@ -2,7 +2,7 @@ name: $(Date:yyyyMMdd)$(Rev:.r)_$(Build.SourceBranchName)_$(BuildID)
 trigger: none
 
 pool:
-  name: $(AZURE_POOL_NAME)
+  vmImage: ubuntu-latest
 
 parameters:
 - name: build2019containerd
