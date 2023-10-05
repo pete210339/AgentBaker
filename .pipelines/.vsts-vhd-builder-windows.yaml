@@ -2,7 +2,7 @@ name: $(Date:yyyyMMdd)$(Rev:.r)_$(Build.SourceBranchName)_$(BuildID)
 trigger: none
 
 pool:
-  vmImage: ubuntu-latest
+  name: $(AZURE_POOL_NAME)
 
 variables:
 - group: ab-windows-ms-tenant
