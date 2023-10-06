@@ -60,6 +60,7 @@ endif
 az-login:
 	@echo "Logging into Azure with agent VM MSI..."
 	@az login --identity
+	@az account list
 	@az account set -s ${SUBSCRIPTION_ID}
 
 init-packer:
