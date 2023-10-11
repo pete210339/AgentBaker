@@ -263,8 +263,8 @@ function Install-ContainerD {
 }
 
 function Install-OpenSSH {
-    Write-Log "Remove This Step Temporary - Installing OpenSSH Server"
-    # Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
+    Write-Log "Installing OpenSSH Server"
+    Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
 }
 
 function Install-WindowsPatches {
