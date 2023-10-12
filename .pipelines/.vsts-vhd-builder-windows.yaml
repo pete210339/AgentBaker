@@ -61,19 +61,23 @@ stages:
     -   job: Create AKS CLuster
         timeoutInMinutes: 60
         steps:
-          - task: Login
+          - task: Login@1
+            displayName: Login
             - powershell: |
                 # login using service principal
                 az login --service-principal --username $(AZURE_BUILD_CLIENT_ID) --password $(AZURE_BUILD_CLIENT_SECRET) --tenant $(AZURE_BUILD_TENANT_ID)
-          - task: Set Subscription
+          - task: SetSubscription@1
+            displayName: Set Subscription
             - powershell: |
                 # set subscription account
                 az account set -s $(AZURE_BUILD_SUBSCRIPTION_ID)
-          - task: Create Resource Group
+          - task: CreateResourceGroup@1
+            displayName: Create Resource Group
             - powershell: |
                 # create resource group
                 az group create -n $(AZURE_BUILD_RESOURCE_GROUP_NAME)-$(SIG_IMAGE_VERSION) -l $(AZURE_BUILD_LOCATION)
-          - task: Create AKS Cluster
+          - task: CreateAKSCluster@1
+            displayName: Create AKS Cluster
             - powershell: |
                 # create cluster
                 az aks create \
@@ -86,7 +90,8 @@ stages:
                 --windows-admin-username azureuser \
                 --windows-admin-password $(CLUSTER_PASSWORD) \
                 --generate-ssh-keys 
-          - task: Add Window Node Pool
+          - task: AddWindowsNodePool@1
+            displayName: Add Windows Node Pool
             - powershell: |
                 # add windows node pool and set custom image to use from previous pipeline stage
                 az aks nodepool add \
