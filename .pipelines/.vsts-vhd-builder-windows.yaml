@@ -8,16 +8,12 @@ variables:
 - group: ab-windows-ms-tenant
 
 parameters:
-- name: build2019containerd
-  displayName: Build 2019 containerd
+- name: build23h2containerd
+  displayName: Build 23H2 containerd
   type: boolean
   default: True
-- name: build2022containerd
-  displayName: Build 2022 containerd
-  type: boolean
-  default: True
-- name: build2022containerdgen2
-  displayName: Build 2022 containerd Gen 2
+- name: build2025containerd
+  displayName: Build 2025 containerd
   type: boolean
   default: True
 - name: vhddebug
@@ -33,9 +29,9 @@ parameters:
 # Use variable group "ab-windows-ms-tenant" and link it to the pipeline "[TEST All VHDs] AKS Windows VHD Build - Msft Tenant"
 
 stages:
-  - stage: build_vhd_2022_containerd
+  - stage: build_vhd_23h2_containerd
     dependsOn: []
-    condition: eq('${{ parameters.build2022containerd }}', True)
+    condition: eq('${{ parameters.build23h2containerd }}', True)
     jobs:
     - job: build
       timeoutInMinutes: 180
@@ -46,17 +42,17 @@ stages:
             echo '##vso[task.setvariable variable=VHD_DEBUG]${{parameters.vhddebug}}'
             echo '##vso[task.setvariable variable=HYPERV_GENERATION]V1'
             echo '##vso[task.setvariable variable=AZURE_VM_SIZE]Standard_D4s_v3'
-            echo '##vso[task.setvariable variable=WINDOWS_SKU]2022-containerd'
-            echo '##vso[task.setvariable variable=WINDOWS_BASE_IMAGE_URL]$(WINDOWS_2022_BASE_IMAGE_URL)'
+            echo '##vso[task.setvariable variable=WINDOWS_SKU]23h2-containerd'
+            echo '##vso[task.setvariable variable=WINDOWS_BASE_IMAGE_URL]$(WINDOWS_23H2_BASE_IMAGE_URL)'
             echo '##vso[task.setvariable variable=WINDOWS_NANO_IMAGE_URL]$(WINDOWS_2022_NANO_IMAGE_URL)'
             echo '##vso[task.setvariable variable=WINDOWS_CORE_IMAGE_URL]$(WINDOWS_2022_CORE_IMAGE_URL)'
             echo '##vso[task.setvariable variable=WINDOWS_PRIVATE_PACKAGES_URL]$(PRIVATE_PACKAGES_URL)'
           displayName: Setup Build Variables
         - template: ./templates/.builder-release-template-windows.yaml
           parameters:
-            artifactName: 2022-containerd
+            artifactName: 23h2-containerd
   - stage: create_aks_cluster
-    dependsOn: build_vhd_2022_containerd
+    dependsOn: build_vhd_23h2_containerd
     jobs:
       - job: create
         timeoutInMinutes: 60
@@ -71,12 +67,12 @@ stages:
             displayName: Set Subscription
           - powershell: |
               # create resource group
-              az group create -n $(AZURE_BUILD_RESOURCE_GROUP_NAME)-$(SIG_IMAGE_VERSION) -l $(AZURE_BUILD_LOCATION)
+              az group create -n $(AZURE_BUILD_RESOURCE_GROUP_NAME)-$(SIG_IMAGE_VERSION)-23h2 -l $(AZURE_BUILD_LOCATION)
             displayName: Create Resource Group
           - powershell: |
               # create cluster
               az aks create `
-              --resource-group $(AZURE_BUILD_RESOURCE_GROUP_NAME)-$(SIG_IMAGE_VERSION) `
+              --resource-group $(AZURE_BUILD_RESOURCE_GROUP_NAME)-$(SIG_IMAGE_VERSION)-23h2 `
               --name $(AZURE_BUILD_RESOURCE_GROUP_NAME)-aks `
               --enable-addons monitoring `
               --network-plugin $(CLUSTER_NETWORK_TYPE)`
@@ -96,7 +92,74 @@ stages:
               --os-type Windows `
               --name npwin `
               --node-count 1  `
-              --aks-custom-headers AKSHTTPCustomFeatures=Microsoft.ContainerService/UseCustomizedWindowsOSImage,WindowsOSImageSubscriptionID=$(AZURE_BUILD_SUBSCRIPTION_ID),WindowsOSImageResourceGroup=$(AZURE_BUILD_RESOURCE_GROUP_NAME),WindowsOSImageGallery=$(AZURE_BUILD_GALLERY_NAME),WindowsOSImageName=windows-2022-containerd,WindowsOSImageVersion=$(SIG_IMAGE_VERSION)
+              --aks-custom-headers AKSHTTPCustomFeatures=Microsoft.ContainerService/UseCustomizedWindowsOSImage,WindowsOSImageSubscriptionID=$(AZURE_BUILD_SUBSCRIPTION_ID),WindowsOSImageResourceGroup=$(AZURE_BUILD_RESOURCE_GROUP_NAME),WindowsOSImageGallery=$(AZURE_BUILD_GALLERY_NAME),WindowsOSImageName=windows-23h2-containerd,WindowsOSImageVersion=$(SIG_IMAGE_VERSION)
+            displayName: Add Windows Node Pool
+
+stages:
+  - stage: build_vhd_2025_containerd
+    dependsOn: []
+    condition: eq('${{ parameters.build2025containerd }}', True)
+    jobs:
+    - job: build
+      timeoutInMinutes: 180
+      steps:
+        - bash: |
+            echo '##vso[task.setvariable variable=DRY_RUN]True'
+            echo '##vso[task.setvariable variable=BACKFILL_RESOURCE_DELETION]${{parameters.backfillresourcedeletion}}'
+            echo '##vso[task.setvariable variable=VHD_DEBUG]${{parameters.vhddebug}}'
+            echo '##vso[task.setvariable variable=HYPERV_GENERATION]V1'
+            echo '##vso[task.setvariable variable=AZURE_VM_SIZE]Standard_D4s_v3'
+            echo '##vso[task.setvariable variable=WINDOWS_SKU]2025-containerd'
+            echo '##vso[task.setvariable variable=WINDOWS_BASE_IMAGE_URL]$(WINDOWS_2025_BASE_IMAGE_URL)'
+            echo '##vso[task.setvariable variable=WINDOWS_NANO_IMAGE_URL]$(WINDOWS_2025_NANO_IMAGE_URL)'
+            echo '##vso[task.setvariable variable=WINDOWS_CORE_IMAGE_URL]$(WINDOWS_2025_CORE_IMAGE_URL)'
+            echo '##vso[task.setvariable variable=WINDOWS_PRIVATE_PACKAGES_URL]$(PRIVATE_PACKAGES_URL)'
+          displayName: Setup Build Variables
+        - template: ./templates/.builder-release-template-windows.yaml
+          parameters:
+            artifactName: 2025-containerd
+  - stage: create_aks_cluster
+    dependsOn: build_vhd_2025_containerd
+    jobs:
+      - job: create
+        timeoutInMinutes: 60
+        steps:
+          - powershell: |
+              # login using service principal
+              az login --service-principal --username $(AZURE_BUILD_CLIENT_ID) --password $(AZURE_BUILD_CLIENT_SECRET) --tenant $(AZURE_BUILD_TENANT_ID)
+            displayName: Service Principal Login
+          - powershell: |
+              # set subscription account
+              az account set -s $(AZURE_BUILD_SUBSCRIPTION_ID)
+            displayName: Set Subscription
+          - powershell: |
+              # create resource group
+              az group create -n $(AZURE_BUILD_RESOURCE_GROUP_NAME)-$(SIG_IMAGE_VERSION)-2025 -l $(AZURE_BUILD_LOCATION)
+            displayName: Create Resource Group
+          - powershell: |
+              # create cluster
+              az aks create `
+              --resource-group $(AZURE_BUILD_RESOURCE_GROUP_NAME)-$(SIG_IMAGE_VERSION)-2025  `
+              --name $(AZURE_BUILD_RESOURCE_GROUP_NAME)-aks `
+              --enable-addons monitoring `
+              --network-plugin $(CLUSTER_NETWORK_TYPE)`
+              --vm-set-type VirtualMachineScaleSets `
+              --load-balancer-sku standard `
+              --windows-admin-username azureuser `
+              --windows-admin-password $(CLUSTER_PASSWORD) `
+              --generate-ssh-keys 
+            displayName: Create AKS Cluster
+          - powershell: |
+              # add windows node pool and set custom image to use from previous pipeline stage
+              az aks nodepool add `
+              --resource-group $rg `
+              --cluster-name  petetan-aks-cluster `
+              --node-vm-size Standard_D8s_v3 `
+              --node-osdisk-size 256 `
+              --os-type Windows `
+              --name npwin `
+              --node-count 1  `
+              --aks-custom-headers AKSHTTPCustomFeatures=Microsoft.ContainerService/UseCustomizedWindowsOSImage,WindowsOSImageSubscriptionID=$(AZURE_BUILD_SUBSCRIPTION_ID),WindowsOSImageResourceGroup=$(AZURE_BUILD_RESOURCE_GROUP_NAME),WindowsOSImageGallery=$(AZURE_BUILD_GALLERY_NAME),WindowsOSImageName=windows-2025-containerd,WindowsOSImageVersion=$(SIG_IMAGE_VERSION)
             displayName: Add Windows Node Pool
             
   - stage: backfill_cleanup_outdated_resources
