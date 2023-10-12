@@ -51,7 +51,7 @@ stages:
         - template: ./templates/.builder-release-template-windows.yaml
           parameters:
             artifactName: 23h2-containerd
-  - stage: create_aks_cluster
+  - stage: create_aks_cluster_23h2
     dependsOn: build_vhd_23h2_containerd
     jobs:
       - job: create
@@ -117,7 +117,7 @@ stages:
         - template: ./templates/.builder-release-template-windows.yaml
           parameters:
             artifactName: 2025-containerd
-  - stage: create_aks_cluster
+  - stage: create_aks_cluster_2025
     dependsOn: build_vhd_2025_containerd
     jobs:
       - job: create
