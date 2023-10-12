@@ -58,7 +58,7 @@ stages:
     - stage: CreateAKSCluster
       dependsOn: build_vhd_2022_containerd
       jobs:
-        - job: CreateAKSCLuster
+        - job: create
           timeoutInMinutes: 60
           steps:
             - task: Login@1
