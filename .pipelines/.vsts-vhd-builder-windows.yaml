@@ -55,7 +55,7 @@ stages:
         - template: ./templates/.builder-release-template-windows.yaml
           parameters:
             artifactName: 2022-containerd
-    - stage: CreateAKSCluster
+    - stage: create_aks_cluster
       dependsOn: build_vhd_2022_containerd
       jobs:
         - job: create
