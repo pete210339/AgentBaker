@@ -61,7 +61,6 @@ stages:
       - job: create
         timeoutInMinutes: 60
         steps:
-            displayName: Login
           - powershell: |
               # login using service principal
               az login --service-principal --username $(AZURE_BUILD_CLIENT_ID) --password $(AZURE_BUILD_CLIENT_SECRET) --tenant $(AZURE_BUILD_TENANT_ID)
@@ -98,7 +97,8 @@ stages:
               --name npwin \ 
               --node-count 1  \
               --aks-custom-headers AKSHTTPCustomFeatures=Microsoft.ContainerService/UseCustomizedWindowsOSImage,WindowsOSImageSubscriptionID=$(AZURE_BUILD_SUBSCRIPTION_ID),WindowsOSImageResourceGroup=$(AZURE_BUILD_RESOURCE_GROUP_NAME),WindowsOSImageGallery=$(AZURE_BUILD_GALLERY_NAME),WindowsOSImageName=windows-2022-containerd,WindowsOSImageVersion=$(SIG_IMAGE_VERSION)
- 
+            displayName: Add Windows Node Pool
+            
   - stage: backfill_cleanup_outdated_resources
     dependsOn: []
     condition: always()
