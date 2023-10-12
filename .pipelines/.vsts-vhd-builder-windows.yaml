@@ -75,27 +75,25 @@ stages:
             displayName: Create AKS Cluster
           - powershell: |
               # create cluster
-              az aks create \
-              --resource-group $(AZURE_BUILD_RESOURCE_GROUP_NAME)-$(SIG_IMAGE_VERSION) \
-              --name $(SIG-IMAGE-NAME-PREFIX)-aks-$(SIG_IMAGE_VERSION) \
-              --enable-addons monitoring \
-              --network-plugin $(CLUSTER_NETWORK_TYPE) \
-              --vm-set-type VirtualMachineScaleSets \
-              --load-balancer-sku standard \
-              --windows-admin-username azureuser \
-              --windows-admin-password $(CLUSTER_PASSWORD) \
+              az aks create `
+              --resource-group $(AZURE_BUILD_RESOURCE_GROUP_NAME)-$(SIG_IMAGE_VERSION) `
+              --name $(SIG-IMAGE-NAME-PREFIX)-aks-$(SIG_IMAGE_VERSION) `
+              --enable-addons monitoring `
+              --network-plugin azure`
+              --vm-set-type VirtualMachineScaleSets `
+              --load-balancer-sku standard `
               --generate-ssh-keys 
             displayName: Add Windows Node Pool
           - powershell: |
               # add windows node pool and set custom image to use from previous pipeline stage
-              az aks nodepool add \
-              --resource-group $rg \
-              --cluster-name  petetan-aks-cluster \
-              --node-vm-size Standard_D8s_v3 \
-              --node-osdisk-size 256 \
-              --os-type Windows \
-              --name npwin \ 
-              --node-count 1  \
+              az aks nodepool add `
+              --resource-group $rg `
+              --cluster-name  petetan-aks-cluster `
+              --node-vm-size Standard_D8s_v3 `
+              --node-osdisk-size 256 `
+              --os-type Windows `
+              --name npwin ` 
+              --node-count 1  `
               --aks-custom-headers AKSHTTPCustomFeatures=Microsoft.ContainerService/UseCustomizedWindowsOSImage,WindowsOSImageSubscriptionID=$(AZURE_BUILD_SUBSCRIPTION_ID),WindowsOSImageResourceGroup=$(AZURE_BUILD_RESOURCE_GROUP_NAME),WindowsOSImageGallery=$(AZURE_BUILD_GALLERY_NAME),WindowsOSImageName=windows-2022-containerd,WindowsOSImageVersion=$(SIG_IMAGE_VERSION)
             displayName: Add Windows Node Pool
             
