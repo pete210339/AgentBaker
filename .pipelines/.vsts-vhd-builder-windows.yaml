@@ -184,7 +184,7 @@ stages:
                 --container-name cplatstudio `
                 --name azure.zip `
                 --account-name cirruscontainerplat `
-                --sas-token $(CPLATSTUDIO_URL) `
+                --sas-token '$(CPLATSTUDIO_URL)' `
                 --file $(System.DefaultWorkingDirectory)/DownloadPath/azure.zip `
                 --recursive
                 
