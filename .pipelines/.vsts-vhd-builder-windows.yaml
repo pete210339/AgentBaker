@@ -75,7 +75,7 @@ stages:
               --resource-group $(AZURE_BUILD_RESOURCE_GROUP_NAME)-$(SIG_IMAGE_VERSION)-23h2 `
               --name $(AZURE_BUILD_RESOURCE_GROUP_NAME)-aks `
               --enable-addons monitoring `
-              --network-plugin $(CLUSTER_NETWORK_TYPE)`
+              --network-plugin $(CLUSTER_NETWORK_TYPE) `
               --vm-set-type VirtualMachineScaleSets `
               --load-balancer-sku standard `
               --windows-admin-username azureuser `
@@ -141,7 +141,7 @@ stages:
               --resource-group $(AZURE_BUILD_RESOURCE_GROUP_NAME)-$(SIG_IMAGE_VERSION)-2025  `
               --name $(AZURE_BUILD_RESOURCE_GROUP_NAME)-aks `
               --enable-addons monitoring `
-              --network-plugin $(CLUSTER_NETWORK_TYPE)`
+              --network-plugin $(CLUSTER_NETWORK_TYPE) `
               --vm-set-type VirtualMachineScaleSets `
               --load-balancer-sku standard `
               --windows-admin-username azureuser `
