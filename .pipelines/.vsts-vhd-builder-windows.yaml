@@ -7,6 +7,13 @@ variables:
 pool:
   name: $(AZURE_POOL_NAME)
 
+resources:
+  containers:
+    - container: python
+      # TODO: Figure out how to login to isolated ACR from non OneBranch pipeline
+      image: cplatpublic.azurecr.io/python:3.10.4
+      type: Linux
+      
 parameters:
 - name: build23h2containerd
   displayName: Build 23H2 containerd
@@ -168,11 +175,6 @@ stages:
         timeoutInMinutes: 60
         pool:
           vmImage: ubuntu-latest
-        resources:
-          containers:
-            - container: python
-              image: cplatpublic.azurecr.io/python:3.10.4
-              type: Linux
         steps:
         - task: PipAuthenticate@1
           inputs:
