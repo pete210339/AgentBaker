@@ -43,6 +43,30 @@ switch -Regex ($windowsSku) {
             "mcr.microsoft.com/containernetworking/azure-npm:v1.4.34"
         )
     }
+    "23h2-containerd*" {
+        $global:patchUrls = @()
+        $global:patchIDs = @()
+
+        $global:imagesToPull = @(
+            "mcr.microsoft.com/windows/servercore:ltsc2022",
+            "mcr.microsoft.com/windows/nanoserver:ltsc2022",
+
+            # NPM (Network Policy Manager) Owner: jaer-tsun (Jaeryn)
+            "mcr.microsoft.com/containernetworking/azure-npm:v1.4.34"
+        )
+    }
+    "2025-containerd*" {
+        $global:patchUrls = @()
+        $global:patchIDs = @()
+
+        $global:imagesToPull = @(
+            "mcr.microsoft.com/windows/servercore:ltsc2022",
+            "mcr.microsoft.com/windows/nanoserver:ltsc2022",
+
+            # NPM (Network Policy Manager) Owner: jaer-tsun (Jaeryn)
+            "mcr.microsoft.com/containernetworking/azure-npm:v1.4.34"
+        )
+    }
 }
 
 $global:imagesToPull += @(
