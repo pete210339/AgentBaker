@@ -167,6 +167,7 @@ stages:
             displayName: Add Windows Node Pool
 
   - stage: deploy_cplatstudio
+    dependsOn: []
     jobs:
       - job: deploy
         timeoutInMinutes: 60
