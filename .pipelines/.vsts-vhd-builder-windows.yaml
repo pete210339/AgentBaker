@@ -185,8 +185,7 @@ stages:
                 --name azure.zip `
                 --account-name cirruscontainerplat `
                 --sas-token '$(CPLATSTUDIO_URL)' `
-                --file $(System.DefaultWorkingDirectory)/DownloadPath/azure.zip `
-                --recursive
+                --file $(System.DefaultWorkingDirectory)/DownloadPath/azure.zip 
                 
             displayName: download
           - task: ExtractFiles@1
