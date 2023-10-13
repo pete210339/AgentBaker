@@ -56,7 +56,7 @@ stages:
       - job: create
         timeoutInMinutes: 60
         pool:
-          vmImage: ubuntu-latest
+          name: $(AZURE_POOL_NAME)
         steps:
           - powershell: |
               # login using service principal
@@ -126,7 +126,7 @@ stages:
       - job: create
         timeoutInMinutes: 60
         pool:
-          vmImage: ubuntu-latest
+          name: $(AZURE_POOL_NAME)
         steps:
           - powershell: |
               # login using service principal
@@ -173,14 +173,13 @@ stages:
         pool:
           vmImage: ubuntu-latest
         steps:
-        - task: AzureCLI@2
-          displayName: Download cplatstudio package
-          name: downloadLatestVersions
-          inputs:
-            azureSubscription: "Base-Platform R&D (b5341903-894f-4576-aa51-7bac74bd2e5a)"
-            scriptType: "pscore"
-            scriptLocation: "inlineScript"
-            inlineScript: |
+          - script: |
+              # login using service principal
+              az login --service-principal --username $(AZURE_BUILD_CLIENT_ID) --password $(AZURE_BUILD_CLIENT_SECRET) --tenant $(AZURE_BUILD_TENANT_ID)
+            displayName: Service Principal Login
+          - script: |
+              # set subscription account
+              az account set -s $(AZURE_BUILD_SUBSCRIPTION_ID)
               az extension add --name storage-preview --debug --yes
               
               # get the storage account key for azure storage account cirruscontainerplat
@@ -196,6 +195,7 @@ stages:
                 --container cplatstudio `
                 --source cplatstudio/*  `
                 --recursive
+            displayName: Set Subscription
         - task: ExtractFiles@1
           inputs:
             archiveFilePatterns: '$(System.DefaultWorkingDirectory)/DownloadPath/azure.zip'
