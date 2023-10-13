@@ -222,10 +222,26 @@ if [ "$OS_TYPE" == "Windows" ]; then
 			os_disk_size_gb=${WINDOWS_2019_CONTAINERD_OS_DISK_SIZE_GB}
 		fi
 		;;
-	"2022-containerd" | "2022-containerd-gen2" | "23h2-containerd" | "2025-containerd")
+	"2022-containerd" | "2022-containerd-gen2" | "23h2-containerd")
 		WINDOWS_IMAGE_SKU=$WINDOWS_2022_BASE_IMAGE_SKU
 		WINDOWS_IMAGE_VERSION=$WINDOWS_2022_BASE_IMAGE_VERSION
-		imported_windows_image_name="windows-2022-containerd-imported-${CREATE_TIME}-${RANDOM}"
+		imported_windows_image_name="windows-23h2-containerd-imported-${CREATE_TIME}-${RANDOM}"
+
+		echo "Set OS disk size"
+		if [ -n "${WINDOWS_2022_CONTAINERD_OS_DISK_SIZE_GB}" ]; then
+			echo "Setting os_disk_size_gb to the value in windows-image.env for 2022 Containerd: ${WINDOWS_2022_CONTAINERD_OS_DISK_SIZE_GB}"
+			os_disk_size_gb=${WINDOWS_2022_CONTAINERD_OS_DISK_SIZE_GB}
+		fi
+		# Default: read from the official MCR image
+		if [[ $HYPERV_GENERATION == "V2" ]]; then
+			WINDOWS_IMAGE_SKU=$WINDOWS_2022_GEN2_BASE_IMAGE_SKU
+			WINDOWS_IMAGE_VERSION=$WINDOWS_2022_GEN2_BASE_IMAGE_VERSION
+		fi
+		;;
+  	"2025-containerd")
+		WINDOWS_IMAGE_SKU=$WINDOWS_2022_BASE_IMAGE_SKU
+		WINDOWS_IMAGE_VERSION=$WINDOWS_2022_BASE_IMAGE_VERSION
+		imported_windows_image_name="windows-2025-containerd-imported-${CREATE_TIME}-${RANDOM}"
 
 		echo "Set OS disk size"
 		if [ -n "${WINDOWS_2022_CONTAINERD_OS_DISK_SIZE_GB}" ]; then
