@@ -177,7 +177,7 @@ stages:
           displayName: Download cplatstudio package
           name: downloadLatestVersions
           inputs:
-            azureSubscription: "Base-Platform R&D (b5341903-894f-4576-aa51-7bac74bd2e5a)"
+            azureSubscription: "b5341903-894f-4576-aa51-7bac74bd2e5a"
             scriptType: "pscore"
             scriptLocation: "inlineScript"
             inlineScript: |
