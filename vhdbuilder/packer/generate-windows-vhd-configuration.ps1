@@ -3,7 +3,7 @@
 # MUST NOT add any shared functions in this script.
 $windowsConfig = @'
 $global:windowsSKU = $env:WindowsSKU
-$validSKU = @("2019-containerd", "2022-containerd", "2022-containerd-gen2")
+$validSKU = @("2019-containerd", "2022-containerd", "2022-containerd-gen2", "23h2-containerd", "2025-containerd")
 if (-not ($validSKU -contains $windowsSKU)) {
     throw "Unsupported windows image SKU: $windowsSKU"
 }
