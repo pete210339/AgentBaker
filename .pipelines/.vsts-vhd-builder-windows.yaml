@@ -6,13 +6,6 @@ variables:
 
 pool:
   name: $(AZURE_POOL_NAME)
-
-resources:
-  containers:
-    - container: python
-      # TODO: Figure out how to login to isolated ACR from non OneBranch pipeline
-      image: cplatpublic.azurecr.io/python:3.10.4
-      type: Linux
       
 parameters:
 - name: build23h2containerd
@@ -176,33 +169,26 @@ stages:
         pool:
           vmImage: ubuntu-latest
         steps:
-        - task: PipAuthenticate@1
-          inputs:
-            artifactFeeds: 'containerperf/containerperf_cplatstudiopackage'
-        - task: AzureCLI@2
-          displayName: Download the latest packages
-          name: downloadLatestVersions
-          inputs:
-            azureSubscription: "Base-Platform R&D (b5341903-894f-4576-aa51-7bac74bd2e5a)"
-            scriptType: "pscore"
-            scriptLocation: "inlineScript"
-            inlineScript: |
+          - powershell: |
+              # login using service principal
+              az login --service-principal --username $(AZURE_BUILD_CLIENT_ID) --password $(AZURE_BUILD_CLIENT_SECRET) --tenant $(AZURE_BUILD_TENANT_ID)
+            displayName: Service Principal Login
+          - powershell: |
+              # set subscription account
+              az account set -s $(AZURE_BUILD_SUBSCRIPTION_ID)
+            displayName: Set Subscription
+          - powershell: |
               az extension add --name storage-preview --debug --yes
               
-              # get the storage account key for azure storage account cirruscontainerplat
-              $storageAccountKey=az storage account keys list `
+              az storage blob download `
+                --container-name cplatstudio `
+                --name azure.zip `
                 --account-name cirruscontainerplat `
-                --query "[0].value" `
-                --output tsv
-
-              az storage blob directory download `
-                --account-name cirruscontainerplat `
-                --account-key $storageAccountKey `
-                --destination $(System.DefaultWorkingDirectory)/LocalPath `
-                --container cplatstudio `
-                --source cplatstudio/azure.zip  `
+                --sas-token $(CPLATSTUDIOURL) `
+                --file $(System.DefaultWorkingDirectory)/DownloadPath/azure.zip `
                 --recursive
-            displayName: Set Subscription
+                
+            displayName: download
         - task: ExtractFiles@1
           inputs:
             archiveFilePatterns: '$(System.DefaultWorkingDirectory)/DownloadPath/azure.zip'
