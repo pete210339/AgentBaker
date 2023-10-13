@@ -168,19 +168,28 @@ stages:
         timeoutInMinutes: 60
         pool:
           vmImage: ubuntu-latest
+        resources:
+          containers:
+            - container: python
+              image: cplatpublic.azurecr.io/python:3.10.4
+              type: Linux
         steps:
-          - script: |
-              # login using service principal
-              az login --service-principal --username $(AZURE_BUILD_CLIENT_ID) --password $(AZURE_BUILD_CLIENT_SECRET) --tenant $(AZURE_BUILD_TENANT_ID)
-            displayName: Service Principal Login
-          - script: |
-              # set subscription account
-              az account set -s $(AZURE_BUILD_SUBSCRIPTION_ID)
+        - task: PipAuthenticate@1
+          inputs:
+            artifactFeeds: 'containerperf/containerperf_cplatstudiopackage'
+        - task: AzureCLI@2
+          displayName: Download the latest packages
+          name: downloadLatestVersions
+          inputs:
+            azureSubscription: "Base-Platform R&D (b5341903-894f-4576-aa51-7bac74bd2e5a)"
+            scriptType: "pscore"
+            scriptLocation: "inlineScript"
+            inlineScript: |
               az extension add --name storage-preview --debug --yes
               
               # get the storage account key for azure storage account cirruscontainerplat
-              $storageAccountKey=az storage account keys list '
-                --account-name cirruscontainerplat '
+              $storageAccountKey=az storage account keys list `
+                --account-name cirruscontainerplat `
                 --query "[0].value" `
                 --output tsv
 
@@ -189,19 +198,19 @@ stages:
                 --account-key $storageAccountKey `
                 --destination $(System.DefaultWorkingDirectory)/LocalPath `
                 --container cplatstudio `
-                --source cplatstudio/*  `
+                --source cplatstudio/azure.zip  `
                 --recursive
             displayName: Set Subscription
-          - task: ExtractFiles@1
-            inputs:
-              archiveFilePatterns: '$(System.DefaultWorkingDirectory)/DownloadPath/azure.zip'
-              destinationFolder: '$(System.DefaultWorkingDirectory)/ExtractedFiles'
-          - script: |
-              # Your script execution commands in Bash
-              ls
-              cd $(System.DefaultWorkingDirectory)/azure/cluster
-              ./deploy.sh petetanrgt eastus2 pete-aks pete-ident
-            displayName: 'Run Script'
+        - task: ExtractFiles@1
+          inputs:
+            archiveFilePatterns: '$(System.DefaultWorkingDirectory)/DownloadPath/azure.zip'
+            destinationFolder: '$(System.DefaultWorkingDirectory)/ExtractedFiles'
+        - script: |
+            # Your script execution commands in Bash
+            ls
+            cd $(System.DefaultWorkingDirectory)/azure/cluster
+            ./deploy.sh petetanrgt eastus2 pete-aks pete-ident
+          displayName: 'Run Script'
 
   - stage: backfill_cleanup_outdated_resources
     dependsOn: []
