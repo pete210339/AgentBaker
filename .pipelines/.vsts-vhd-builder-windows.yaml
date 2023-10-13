@@ -1,9 +1,6 @@
 name: $(Date:yyyyMMdd)$(Rev:.r)_$(Build.SourceBranchName)_$(BuildID)
 trigger: none
 
-pool:
-  name: $(AZURE_POOL_NAME)
-
 variables:
 - group: ab-windows-ms-tenant
 
@@ -35,6 +32,8 @@ stages:
     jobs:
     - job: build
       timeoutInMinutes: 180
+      pool:
+        name: $(AZURE_POOL_NAME)
       steps:
         - bash: |
             echo '##vso[task.setvariable variable=DRY_RUN]True'
@@ -56,6 +55,8 @@ stages:
     jobs:
       - job: create
         timeoutInMinutes: 60
+        pool:
+          vmImage: ubuntu-latest
         steps:
           - powershell: |
               # login using service principal
@@ -101,6 +102,8 @@ stages:
     jobs:
     - job: build
       timeoutInMinutes: 180
+      pool:
+        name: $(AZURE_POOL_NAME)
       steps:
         - bash: |
             echo '##vso[task.setvariable variable=DRY_RUN]True'
@@ -122,6 +125,8 @@ stages:
     jobs:
       - job: create
         timeoutInMinutes: 60
+        pool:
+          vmImage: ubuntu-latest
         steps:
           - powershell: |
               # login using service principal
@@ -160,7 +165,48 @@ stages:
               --node-count 1  `
               --aks-custom-headers AKSHTTPCustomFeatures=Microsoft.ContainerService/UseCustomizedWindowsOSImage,WindowsOSImageSubscriptionID=$(AZURE_BUILD_SUBSCRIPTION_ID),WindowsOSImageResourceGroup=$(AZURE_BUILD_RESOURCE_GROUP_NAME),WindowsOSImageGallery=$(AZURE_BUILD_GALLERY_NAME),WindowsOSImageName=windows-2025-containerd,WindowsOSImageVersion=$(SIG_IMAGE_VERSION)
             displayName: Add Windows Node Pool
-            
+
+  - stage: deploy_cplatstudio
+    jobs:
+      - job: deploy
+        timeoutInMinutes: 60
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+        - task: AzureCLI@2
+          displayName: Download cplatstudio package
+          name: downloadLatestVersions
+          inputs:
+            azureSubscription: "Base-Platform R&D (b5341903-894f-4576-aa51-7bac74bd2e5a)"
+            scriptType: "pscore"
+            scriptLocation: "inlineScript"
+            inlineScript: |
+              az extension add --name storage-preview --debug --yes
+              
+              # get the storage account key for azure storage account cirruscontainerplat
+              $storageAccountKey=az storage account keys list '
+                --account-name cirruscontainerplat '
+                --query "[0].value" `
+                --output tsv
+
+              az storage blob directory download `
+                --account-name cirruscontainerplat `
+                --account-key $storageAccountKey `
+                --destination $(System.DefaultWorkingDirectory)/LocalPath `
+                --container cplatstudio `
+                --source cplatstudio/*  `
+                --recursive
+        - task: ExtractFiles@1
+          inputs:
+            archiveFilePatterns: '$(System.DefaultWorkingDirectory)/DownloadPath/azure.zip'
+            destinationFolder: '$(System.DefaultWorkingDirectory)/ExtractedFiles'
+        - script: |
+            # Your script execution commands in Bash
+            ls
+            cd $(System.DefaultWorkingDirectory)/azure/cluster
+            ./deploy.sh petetanrgt eastus2 pete-aks pete-ident
+          displayName: 'Run Script'
+
   - stage: backfill_cleanup_outdated_resources
     dependsOn: []
     condition: always()
