@@ -4,6 +4,9 @@ trigger: none
 variables:
 - group: ab-windows-ms-tenant
 
+pool:
+  name: $(AZURE_POOL_NAME)
+
 parameters:
 - name: build23h2containerd
   displayName: Build 23H2 containerd
@@ -32,8 +35,6 @@ stages:
     jobs:
     - job: build
       timeoutInMinutes: 180
-      pool:
-        name: $(AZURE_POOL_NAME)
       steps:
         - bash: |
             echo '##vso[task.setvariable variable=DRY_RUN]True'
@@ -55,8 +56,6 @@ stages:
     jobs:
       - job: create
         timeoutInMinutes: 60
-        pool:
-          name: $(AZURE_POOL_NAME)
         steps:
           - powershell: |
               # login using service principal
@@ -102,8 +101,6 @@ stages:
     jobs:
     - job: build
       timeoutInMinutes: 180
-      pool:
-        name: $(AZURE_POOL_NAME)
       steps:
         - bash: |
             echo '##vso[task.setvariable variable=DRY_RUN]True'
@@ -125,8 +122,6 @@ stages:
     jobs:
       - job: create
         timeoutInMinutes: 60
-        pool:
-          name: $(AZURE_POOL_NAME)
         steps:
           - powershell: |
               # login using service principal
