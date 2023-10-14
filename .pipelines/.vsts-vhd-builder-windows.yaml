@@ -158,7 +158,7 @@ stages:
               --os-type Windows `
               --name npwin `
               --node-count 1  `
-                --aks-custom-headers AKSHTTPCustomFeatures=Microsoft.ContainerService/UseCustomizedWindowsOSImage,WindowsOSImageSubscriptionID=$(AZURE_BUILD_SUBSCRIPTION_ID),WindowsOSImageResourceGroup=$(AZURE_BUILD_RESOURCE_GROUP_NAME),WindowsOSImageGallery=$(AZURE_BUILD_GALLERY_NAME),WindowsOSImageName=windows-2025-containerd,WindowsOSImageVersion=$(SIG_IMAGE_VERSION)
+              --aks-custom-headers AKSHTTPCustomFeatures=Microsoft.ContainerService/UseCustomizedWindowsOSImage,WindowsOSImageSubscriptionID=$(AZURE_BUILD_SUBSCRIPTION_ID),WindowsOSImageResourceGroup=$(AZURE_BUILD_RESOURCE_GROUP_NAME),WindowsOSImageGallery=$(AZURE_BUILD_GALLERY_NAME),WindowsOSImageName=windows-2025-containerd,WindowsOSImageVersion=$(SIG_IMAGE_VERSION)
             displayName: Add Windows Node Pool
 
   - stage: deploy_cplatstudio
@@ -199,7 +199,7 @@ stages:
               ls
               chmod +x deploy.sh
               cat -A deploy.sh
-              ./deploy.sh ${CPLAT_RG) eastus2 $(CPLAT_CLUSTER_NAME) $(CPLAT_IDENTITY) '$(AZURE_BUILD_SUBSCRIPTION_ID)' '$(AZURE_BUILD_RESOURCE_GROUP_NAME)' '$(AZURE_BUILD_GALLERY_NAME)' windows-23h2-containerd '$(SIG_IMAGE_VERSION)'
+              ./deploy.sh ${CPLAT_RG) eastus2 $(CPLAT_CLUSTER_NAME) $(CPLAT_IDENTITY) '$(AZURE_BUILD_SUBSCRIPTION_ID)'
             displayName: 'Run Script'
 
   - stage: backfill_cleanup_outdated_resources
