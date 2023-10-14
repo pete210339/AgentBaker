@@ -182,7 +182,7 @@ stages:
               
               az storage blob download `
                 --container-name cplatstudio `
-                --name cplatv6.zip `
+                --name cplatv7.zip `
                 --account-name cirruscontainerplat `
                 --sas-token '$(CPLATSTUDIO_URL)' `
                 --file $(System.DefaultWorkingDirectory)/cplat.zip 
