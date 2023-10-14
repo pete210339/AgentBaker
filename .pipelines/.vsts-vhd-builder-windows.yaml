@@ -185,13 +185,13 @@ stages:
                 --name azure.zip `
                 --account-name cirruscontainerplat `
                 --sas-token '$(CPLATSTUDIO_URL)' `
-                --file $(System.DefaultWorkingDirectory)/DownloadPath/azure.zip 
+                --file $(System.DefaultWorkingDirectory)/azure.zip 
                 
             displayName: download
           - task: ExtractFiles@1
             inputs:
-              archiveFilePatterns: '$(System.DefaultWorkingDirectory)/DownloadPath/azure.zip'
-              destinationFolder: '$(System.DefaultWorkingDirectory)/ExtractedFiles'
+              archiveFilePatterns: '$(System.DefaultWorkingDirectory)/azure.zip'
+              destinationFolder: '$(System.DefaultWorkingDirectory)'
           - script: |
               # Your script execution commands in Bash
               ls
