@@ -192,11 +192,11 @@ stages:
             inputs:
               archiveFilePatterns: '$(System.DefaultWorkingDirectory)/cplat.zip'
               destinationFolder: '$(System.DefaultWorkingDirectory)/cplat'
-          - script: |
+          - bash: |
               # Your script execution commands in Bash
               cd $(System.DefaultWorkingDirectory)/cplat/cluster
               chmod +x deploy.sh
-              ./deploy.sh cplat2rg eastus2 cplat2-aks cplat2-ident b5341903-894f-4576-aa51-7bac74bd2e5a containerplat MyTestGalleryEastUS windows-23h2-containerd 1.0.6
+              ./deploy.sh ${CPLAT_RG) eastus2 $(CPLAT_CLUSTER_NAME) $(CPLAT_IDENTITY) $(AZURE_BUILD_SUBSCRIPTION_ID) $(AZURE_BUILD_RESOURCE_GROUP_NAME) $(AZURE_BUILD_GALLERY_NAME) windows-23h2-containerd $(SIG_IMAGE_VERSION)
             displayName: 'Run Script'
 
   - stage: backfill_cleanup_outdated_resources
