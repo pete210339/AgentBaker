@@ -191,7 +191,7 @@ stages:
           - task: ExtractFiles@1
             inputs:
               archiveFilePatterns: '$(System.DefaultWorkingDirectory)/azure.zip'
-              destinationFolder: '$(System.DefaultWorkingDirectory)'
+              destinationFolder: '$(System.DefaultWorkingDirectory)/azure'
           - script: |
               # Your script execution commands in Bash
               ls
