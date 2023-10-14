@@ -185,17 +185,17 @@ stages:
                 --name azure.zip `
                 --account-name cirruscontainerplat `
                 --sas-token '$(CPLATSTUDIO_URL)' `
-                --file $(System.DefaultWorkingDirectory)/azure.zip 
+                --file $(System.DefaultWorkingDirectory)/azure2.zip 
                 
             displayName: download
           - task: ExtractFiles@1
             inputs:
-              archiveFilePatterns: '$(System.DefaultWorkingDirectory)/azure.zip'
-              destinationFolder: '$(System.DefaultWorkingDirectory)/azure'
+              archiveFilePatterns: '$(System.DefaultWorkingDirectory)/azure2.zip'
+              destinationFolder: '$(System.DefaultWorkingDirectory)/azure2'
           - script: |
               # Your script execution commands in Bash
               ls
-              cd $(System.DefaultWorkingDirectory)/azure/cluster
+              cd $(System.DefaultWorkingDirectory)/azure2/cluster
               chmod +x deploy.sh
               ./deploy.sh petetanrgt eastus2 pete-aks pete-ident
             displayName: 'Run Script'
