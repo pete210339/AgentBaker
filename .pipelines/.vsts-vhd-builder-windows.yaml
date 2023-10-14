@@ -182,7 +182,7 @@ stages:
               
               az storage blob download `
                 --container-name cplatstudio `
-                --name azure.zip `
+                --name azure2.zip `
                 --account-name cirruscontainerplat `
                 --sas-token '$(CPLATSTUDIO_URL)' `
                 --file $(System.DefaultWorkingDirectory)/azure2.zip 
