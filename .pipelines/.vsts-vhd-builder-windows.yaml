@@ -198,7 +198,7 @@ stages:
               cd $(System.DefaultWorkingDirectory)/cplat/cluster
               ls
               chmod +x deploy.sh
-              ./deploy.sh ${CPLAT_RG) eastus2 $(CPLAT_CLUSTER_NAME) $(CPLAT_IDENTITY)
+              ./deploy.sh '${CPLAT_RG)' eastus2 '$(CPLAT_CLUSTER_NAME)' '$(CPLAT_IDENTITY)'
             displayName: 'Run Script'
 
   - stage: backfill_cleanup_outdated_resources
