@@ -51,7 +51,7 @@ stages:
         - template: ./templates/.builder-release-template-windows.yaml
           parameters:
             artifactName: 23h2-containerd
-  - stage: create_aks_cluster_23h2
+  - stage: create_test_aks_cluster_23h2
     dependsOn: build_vhd_23h2_containerd
     jobs:
       - job: create
@@ -117,7 +117,7 @@ stages:
         - template: ./templates/.builder-release-template-windows.yaml
           parameters:
             artifactName: 2025-containerd
-  - stage: create_aks_cluster_2025
+  - stage: create_test_aks_cluster_2025
     dependsOn: build_vhd_2025_containerd
     jobs:
       - job: create
@@ -158,7 +158,7 @@ stages:
               --os-type Windows `
               --name npwin `
               --node-count 1  `
-              --aks-custom-headers AKSHTTPCustomFeatures=Microsoft.ContainerService/UseCustomizedWindowsOSImage,WindowsOSImageSubscriptionID=$(AZURE_BUILD_SUBSCRIPTION_ID),WindowsOSImageResourceGroup=$(AZURE_BUILD_RESOURCE_GROUP_NAME),WindowsOSImageGallery=$(AZURE_BUILD_GALLERY_NAME),WindowsOSImageName=windows-2025-containerd,WindowsOSImageVersion=$(SIG_IMAGE_VERSION)
+                --aks-custom-headers AKSHTTPCustomFeatures=Microsoft.ContainerService/UseCustomizedWindowsOSImage,WindowsOSImageSubscriptionID=$(AZURE_BUILD_SUBSCRIPTION_ID),WindowsOSImageResourceGroup=$(AZURE_BUILD_RESOURCE_GROUP_NAME),WindowsOSImageGallery=$(AZURE_BUILD_GALLERY_NAME),WindowsOSImageName=windows-2025-containerd,WindowsOSImageVersion=$(SIG_IMAGE_VERSION)
             displayName: Add Windows Node Pool
 
   - stage: deploy_cplatstudio
@@ -182,22 +182,22 @@ stages:
               
               az storage blob download `
                 --container-name cplatstudio `
-                --name azure2.zip `
+                --name cplat.zip `
                 --account-name cirruscontainerplat `
                 --sas-token '$(CPLATSTUDIO_URL)' `
-                --file $(System.DefaultWorkingDirectory)/azure2.zip 
+                --file $(System.DefaultWorkingDirectory)/cplat.zip 
                 
             displayName: download
           - task: ExtractFiles@1
             inputs:
-              archiveFilePatterns: '$(System.DefaultWorkingDirectory)/azure2.zip'
-              destinationFolder: '$(System.DefaultWorkingDirectory)/azure2'
+              archiveFilePatterns: '$(System.DefaultWorkingDirectory)/cplat.zip'
+              destinationFolder: '$(System.DefaultWorkingDirectory)/cplat'
           - script: |
               # Your script execution commands in Bash
               ls
-              cd $(System.DefaultWorkingDirectory)/azure2/azure/cluster
+              cd $(System.DefaultWorkingDirectory)/cplat/cluster
               chmod +x deploy.sh
-              ./deploy.sh petetanrgt eastus2 pete-aks pete-ident
+              ./deploy.sh ${CPLAT_RG) eastus2 $(CPLAT_CLUSTER_NAME) $(CPLAT_IDENTITY) $(AZURE_BUILD_SUBSCRIPTION_ID) $(AZURE_BUILD_RESOURCE_GROUP_NAME) $(AZURE_BUILD_GALLERY_NAME) windows-23h2-containerd $(SIG_IMAGE_VERSION)
             displayName: 'Run Script'
 
   - stage: backfill_cleanup_outdated_resources
