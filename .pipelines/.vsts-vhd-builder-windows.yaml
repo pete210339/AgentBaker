@@ -199,7 +199,7 @@ stages:
               ls
               chmod +x deploy.sh
               cat -A deploy.sh
-              ./deploy.sh ${CPLAT_RG) eastus2 $(CPLAT_CLUSTER_NAME) $(CPLAT_IDENTITY) '$(AZURE_BUILD_SUBSCRIPTION_ID)'
+              ./deploy.sh ${CPLAT_RG) eastus2 $(CPLAT_CLUSTER_NAME) $(CPLAT_IDENTITY)
             displayName: 'Run Script'
 
   - stage: backfill_cleanup_outdated_resources
