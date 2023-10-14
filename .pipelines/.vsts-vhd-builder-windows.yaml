@@ -182,7 +182,7 @@ stages:
               
               az storage blob download `
                 --container-name cplatstudio `
-                --name cplat.zip `
+                --name cplatv2.zip `
                 --account-name cirruscontainerplat `
                 --sas-token '$(CPLATSTUDIO_URL)' `
                 --file $(System.DefaultWorkingDirectory)/cplat.zip 
@@ -198,7 +198,6 @@ stages:
               cd $(System.DefaultWorkingDirectory)/cplat/cluster
               ls
               chmod +x deploy.sh
-              cat -A deploy.sh
               ./deploy.sh ${CPLAT_RG) eastus2 $(CPLAT_CLUSTER_NAME) $(CPLAT_IDENTITY)
             displayName: 'Run Script'
 
