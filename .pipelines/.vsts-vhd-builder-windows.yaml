@@ -182,7 +182,7 @@ stages:
               
               az storage blob download `
                 --container-name cplatstudio `
-                --name cplatv2.zip `
+                --name cplat.zip `
                 --account-name cirruscontainerplat `
                 --sas-token '$(CPLATSTUDIO_URL)' `
                 --file $(System.DefaultWorkingDirectory)/cplat.zip 
@@ -194,11 +194,9 @@ stages:
               destinationFolder: '$(System.DefaultWorkingDirectory)/cplat'
           - script: |
               # Your script execution commands in Bash
-              ls
               cd $(System.DefaultWorkingDirectory)/cplat/cluster
-              ls
               chmod +x deploy.sh
-              ./deploy.sh '${CPLAT_RG)' eastus2 '$(CPLAT_CLUSTER_NAME)' '$(CPLAT_IDENTITY)'
+              ./deploy.sh '${CPLAT_RG)' eastus2 '$(CPLAT_CLUSTER_NAME)' '$(CPLAT_IDENTITY)' '$(AZURE_BUILD_SUBSCRIPTION_ID)' '$(AZURE_BUILD_RESOURCE_GROUP_NAME)' '$(AZURE_BUILD_GALLERY_NAME)' windows-23h2-containerd '$(SIG_IMAGE_VERSION)'
             displayName: 'Run Script'
 
   - stage: backfill_cleanup_outdated_resources
