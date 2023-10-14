@@ -196,7 +196,8 @@ stages:
               # Your script execution commands in Bash
               ls
               cd $(System.DefaultWorkingDirectory)/azure/cluster
-              sudo ./deploy.sh petetanrgt eastus2 pete-aks pete-ident
+              chmod +x deploy.sh
+              ./deploy.sh petetanrgt eastus2 pete-aks pete-ident
             displayName: 'Run Script'
 
   - stage: backfill_cleanup_outdated_resources
