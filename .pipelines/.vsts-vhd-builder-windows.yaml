@@ -195,10 +195,8 @@ stages:
           - script: |
               # Your script execution commands in Bash
               ls
-              cd $(System.DefaultWorkingDirectory)/azure2/cluster
-              ls
+              cd $(System.DefaultWorkingDirectory)/azure2/azure/cluster
               chmod +x deploy.sh
-              cat deploy.sh
               ./deploy.sh petetanrgt eastus2 pete-aks pete-ident
             displayName: 'Run Script'
 
