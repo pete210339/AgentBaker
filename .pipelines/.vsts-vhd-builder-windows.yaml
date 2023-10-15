@@ -16,6 +16,10 @@ parameters:
   displayName: Build 2025 containerd
   type: boolean
   default: True
+- name: deploycplatstudio
+  displayName: Deploy CplatStudio
+  type: boolean
+  default: False
 - name: vhddebug
   displayName: VHD Debug
   type: boolean
@@ -161,8 +165,9 @@ stages:
               --aks-custom-headers AKSHTTPCustomFeatures=Microsoft.ContainerService/UseCustomizedWindowsOSImage,WindowsOSImageSubscriptionID=$(AZURE_BUILD_SUBSCRIPTION_ID),WindowsOSImageResourceGroup=$(AZURE_BUILD_RESOURCE_GROUP_NAME),WindowsOSImageGallery=$(AZURE_BUILD_GALLERY_NAME),WindowsOSImageName=windows-2025-containerd,WindowsOSImageVersion=$(SIG_IMAGE_VERSION)
             displayName: Add Windows Node Pool
 
-  - stage: deploy_cplatstudio
-    dependsOn: []
+  - stage: deploy_cplatstudio_23h2
+    dependsOn: build_vhd_23h2_containerd
+    condition: eq('${{ parameters.deploycplatstudio }}', True)
     jobs:
       - job: deploy
         timeoutInMinutes: 60
