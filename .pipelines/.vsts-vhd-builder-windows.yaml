@@ -266,7 +266,7 @@ stages:
                 --container-name containerperf `
                 --name containerperf.zip `
                 --account-name cirruscontainerplat `
-                --sas-token '$(CPLATSTUDIO_URL)' `
+                --sas-token '$(NODE_DENSITY_TOKEN)' `
                 --file $(System.DefaultWorkingDirectory)/containerperf.zip 
                 
             displayName: download
