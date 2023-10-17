@@ -247,7 +247,7 @@ stages:
     dependsOn: []
     jobs:
       - job: deploy
-        timeoutInMinutes: 60
+        timeoutInMinutes: 300
         pool:
           vmImage: ubuntu-latest
         steps:
