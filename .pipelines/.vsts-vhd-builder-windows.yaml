@@ -280,7 +280,7 @@ stages:
               chmod +x createcluster.sh
               chmod +x addnodes.sh
               ./createcluster.sh azureuser $(CLUSTER_PASSWORD) $(CLUSTER_NETWORK_TYPE)
-              ./addnodes.sh $(AZURE_BUILD_SUBSCRIPTION_ID) $(AZURE_BUILD_RESOURCE_GROUP_NAME) $(AZURE_BUILD_GALLERY_NAME) windows-23h2-containerd $(SIG_IMAGE_VERSION)
+              ./addnodes.sh $(AZURE_BUILD_SUBSCRIPTION_ID) $(AZURE_BUILD_RESOURCE_GROUP_NAME) $(AZURE_BUILD_GALLERY_NAME) $(SIG_IMAGE_VERSION)
               cd $(System.DefaultWorkingDirectory)/containerperf/src/AKS/NodeDensity
               chmod +x runs.sh
               ./runs.sh
