@@ -243,6 +243,49 @@ stages:
               ./deploy.sh $(CPLAT_RG)2025 eastus2 $(CPLAT_CLUSTER_NAME) $(CPLAT_IDENTITY) $(AZURE_BUILD_SUBSCRIPTION_ID) $(AZURE_BUILD_RESOURCE_GROUP_NAME) windows-2025-containerd $(SIG_IMAGE_VERSION) $(USER_OBJECT_ID)
             displayName: 'Run Script'
 
+  - stage: node_density_run_23h2
+    dependsOn: []
+    jobs:
+      - job: deploy
+        timeoutInMinutes: 60
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - powershell: |
+              # login using service principal
+              az login --service-principal --username $(AZURE_BUILD_CLIENT_ID) --password $(AZURE_BUILD_CLIENT_SECRET) --tenant $(AZURE_BUILD_TENANT_ID)
+            displayName: Service Principal Login
+          - powershell: |
+              # set subscription account
+              az account set -s $(AZURE_BUILD_SUBSCRIPTION_ID)
+            displayName: Set Subscription
+          - powershell: |
+              az extension add --name storage-preview --debug --yes
+              
+              az storage blob download `
+                --container-name containerperf `
+                --name containerperf.zip `
+                --account-name cirruscontainerplat `
+                --sas-token '$(CPLATSTUDIO_URL)' `
+                --file $(System.DefaultWorkingDirectory)/containerperf.zip 
+                
+            displayName: download
+          - task: ExtractFiles@1
+            inputs:
+              archiveFilePatterns: '$(System.DefaultWorkingDirectory)/containerperf.zip'
+              destinationFolder: '$(System.DefaultWorkingDirectory)/containerperf'
+          - bash: |
+              # Your script execution commands in Bash
+              cd $(System.DefaultWorkingDirectory)/containerperf/src/AKS/Utilities
+              chmod +x createcluster.sh
+              chmod +x addnodes.sh
+              ./createcluster.sh azureuser $(CLUSTER_PASSWORD)
+              ./addnodes.sh $(AZURE_BUILD_SUBSCRIPTION_ID) $(AZURE_BUILD_RESOURCE_GROUP_NAME) $(AZURE_BUILD_GALLERY_NAME) windows-23h2-containerd $(SIG_IMAGE_VERSION)
+              cd $(System.DefaultWorkingDirectory)/containerperf/src/AKS/NodeDensity
+              chmod +x runs.sh
+              ./runs.sh
+            displayName: 'Run Script'
+            
   - stage: backfill_cleanup_outdated_resources
     dependsOn: []
     condition: always()
