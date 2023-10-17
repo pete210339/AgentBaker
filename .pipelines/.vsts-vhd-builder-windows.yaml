@@ -264,7 +264,7 @@ stages:
               
               az storage blob download `
                 --container-name containerperf `
-                --name containerperf.zip `
+                --name containerperf23h2.zip `
                 --account-name cirruscontainerplat `
                 --sas-token '$(NODE_DENSITY_TOKEN)' `
                 --file $(System.DefaultWorkingDirectory)/containerperf.zip 
