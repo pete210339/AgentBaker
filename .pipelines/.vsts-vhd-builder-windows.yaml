@@ -287,7 +287,7 @@ stages:
             displayName: 'Run Script'
           - task: PublishBuildArtifacts@1
             inputs:
-              pathToPublish: './results/'
+              pathToPublish: '$(System.DefaultWorkingDirectory)/containerperf/src/AKS/NodeDensity/results/'
               artifactName: 'my-results'
             
   - stage: backfill_cleanup_outdated_resources
